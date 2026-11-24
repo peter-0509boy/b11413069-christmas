@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Winter Romance - Merry Christmas | 資工二乙 李怡瑾</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
+  body {
+    background: linear-gradient(135deg, #1e1332 0%, #2d1b46 45%, #4a1936 100%);
+    color: #fff1f2;
+    font-family: "Microsoft JhengHei", sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+  canvas#snow {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 50;
+  }
+  .aurora {
+    position: fixed;
+    top: -15%; left: 10%;
+    width: 80vw; height: 45vh;
+    background: radial-gradient(ellipse at center, rgba(244, 114, 182, 0.25) 0%, rgba(167, 139, 250, 0.12) 45%, transparent 75%);
+    filter: blur(45px);
+    pointer-events: none;
+    z-index: 1;
+  }
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 8%;
+    position: relative;
+    z-index: 20;
+  }
+  .logo {
+    font-family: Georgia, serif;
+    font-size: 22px;
+    font-weight: bold;
+    color: #fbcfe8;
+    letter-spacing: 1px;
+  }
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    font-size: 14px;
+  }
+  .nav-right span { color: #f9a8d4; font-weight: bold; }
+  .btn-bell {
+    background: rgba(244, 114, 182, 0.2);
+    border: 1px solid #f472b6;
+    color: #fce7f3;
+    padding: 8px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.25s;
+    backdrop-filter: blur(6px);
+  }
+  .btn-bell:hover { background: #f472b6; color: #1e1332; font-weight: bold; }
+  .hero {
+    min-height: 84vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+    z-index: 10;
+  }
+  .pill-tag {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(251, 207, 232, 0.4);
+    color: #fbcfe8;
+    font-size: 12px;
+    letter-spacing: 4px;
+    padding: 6px 20px;
+    border-radius: 999px;
+    margin-bottom: 18px;
+    backdrop-filter: blur(8px);
+  }
+  .hero h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(48px, 7.5vw, 86px);
+    line-height: 1.08;
+    font-weight: normal;
+    background: linear-gradient(to right, #fff1f2, #fbcfe8, #fde68a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 18px;
+  }
+  .hero p {
+    color: #e2e8f0;
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 34px;
+  }
+  .countdown {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 38px;
+  }
+  .time-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(251, 207, 232, 0.3);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 14px 20px;
+    min-width: 78px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  }
+  .time-num {
+    font-family: Georgia, serif;
+    font-size: 32px;
+    color: #fbcfe8;
+    display: block;
+  }
+  .time-label {
+    font-size: 12px;
+    color: #cbd5e1;
+    margin-top: 4px;
+    display: block;
+  }
+  .btn-gift {
+    background: linear-gradient(135deg, #ec4899, #be185d);
+    color: #fff;
+    text-decoration: none;
+    padding: 14px 36px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    box-shadow: 0 8px 25px rgba(236, 72, 153, 0.45);
+    transition: 0.25s;
+  }
+  .btn-gift:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(236, 72, 153, 0.65); }
+  .gallery {
+    padding: 60px 6% 90px;
+    max-width: 1050px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+  }
+  .gallery h2 {
+    font-family: Georgia, serif;
+    font-size: 30px;
+    color: #fbcfe8;
+    margin-bottom: 8px;
+  }
+  .gallery .sub {
+    color: #cbd5e1;
+    font-size: 14px;
+    margin-bottom: 44px;
+  }
+  .polaroids {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+  }
+  .polaroid {
+    background: #fff;
+    color: #1e293b;
+    padding: 16px 16px 26px;
+    border-radius: 10px;
+    width: 400px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    transition: all 0.35s ease;
+    position: relative;
+  }
+  .polaroid:nth-child(1) { transform: rotate(-2deg); }
+  .polaroid:nth-child(2) { transform: rotate(2deg); }
+  .polaroid:hover {
+    transform: rotate(0deg) translateY(-8px) scale(1.02);
+    box-shadow: 0 22px 45px rgba(244, 114, 182, 0.4);
+  }
+  .ribbon {
+    position: absolute;
+    top: -16px; right: 20px;
+    font-size: 34px;
+  }
+  .polaroid img {
+    width: 100%;
+    height: 270px;
+    object-fit: cover;
+    border-radius: 6px;
+    transition: filter 0.4s;
+  }
+  .winter-filter {
+    filter: saturate(0.65) hue-rotate(175deg) brightness(1.08);
+  }
+  .polaroid h3 {
+    margin-top: 16px;
+    font-size: 18px;
+    color: #831843;
+  }
+  .polaroid p {
+    font-size: 13px;
+    color: #64748b;
+    margin-top: 6px;
+  }
+  .wish-box {
+    margin-top: 42px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(251, 207, 232, 0.3);
+    backdrop-filter: blur(10px);
+    padding: 20px 28px;
+    border-radius: 20px;
+    display: inline-block;
+    max-width: 650px;
+  }
+  .wish-text {
+    font-size: 17px;
+    color: #fce7f3;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+  }
+  .controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .ctrl-btn {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(251, 207, 232, 0.45);
+    color: #fff1f2;
+    padding: 8px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s;
+  }
+  .ctrl-btn:hover { background: #f472b6; color: #1e1332; font-weight: bold; }
+</style>
+</head>
+<body>
+  <div class="aurora"></div>
+  <canvas id="snow"></canvas>
+
+  <nav>
+    <div class="logo">🎀 Winter Wonderland</div>
+    <div class="nav-right">
+      <span>資工二乙 李怡瑾</span>
+      <button class="btn-bell" onclick="playChime()">🔔 播放聖誕鈴聲</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="pill-tag">✨ DECEMBER 25 ・ 2026 ✨</div>
+    <h1>Sweet & Cozy<br>Christmas</h1>
+    <p>在這個飄雪的十二月，<br>把最可愛的回憶與祝福都收藏進這張拍立得裡。</p>
+
+    <div class="countdown">
+      <div class="time-card"><span class="time-num" id="days">00</span><span class="time-label">DAYS</span></div>
+      <div class="time-card"><span class="time-num" id="hours">00</span><span class="time-label">HOURS</span></div>
+      <div class="time-card"><span class="time-num" id="mins">00</span><span class="time-label">MINS</span></div>
+      <div class="time-card"><span class="time-num" id="secs">00</span><span class="time-label">SECS</span></div>
+    </div>
+
+    <a href="#gallery" class="btn-gift">開啟聖誕拍立得相簿 ✨</a>
+  </section>
+
+  <section class="gallery" id="gallery">
+    <h2>📸 專屬拍立得與 QR Code 展間</h2>
+    <p class="sub">滑鼠移到相片上可以扶正拍立得，點擊下方按鈕切換濾鏡與祝福語</p>
+
+    <div class="polaroids">
+      <div class="polaroid">
+        <div class="ribbon">🎀</div>
+        <img src="myqrcode_069.jpg" alt="粉紅布丁狗 QR Code">
+        <h3>粉紅布丁狗專屬 QR Code</h3>
+        <p>掃描左上角 QR Code 即可前往指定連結</p>
+      </div>
+
+      <div class="polaroid">
+        <div class="ribbon">❄️</div>
+        <img id="winterImg" src="postcard.jpg" alt="冬日明信片" class="winter-filter">
+        <h3>冬日銀白風景明信片</h3>
+        <p>Python Pillow 影像處理與冬日冷色濾鏡</p>
+      </div>
+    </div>
+
+    <div class="wish-box">
+      <div class="wish-text" id="wishText">🎄 願這個冬天，所有的溫暖與好運都如期而至！</div>
+      <div class="controls">
+        <button class="ctrl-btn" onclick="nextWish()">💌 抽一張聖誕祝福</button>
+        <button class="ctrl-btn" onclick="toggleFilter()">❄️ 切換明信片濾鏡</button>
+        <button class="ctrl-btn" id="snowBtn" onclick="toggleSnow()">🌨️ 雪花：開</button>
+      </div>
+    </div>
+  </section>
+
+<script>
+  function updateCountdown() {
+    const now = new Date();
+    let target = new Date(now.getFullYear(), 11, 25, 0, 0, 0);
+    if (now > target) target.setFullYear(now.getFullYear() + 1);
+    const diff = target - now;
+    document.getElementById('days').innerText = String(Math.floor(diff / 86400000)).padStart(2, '0');
+    document.getElementById('hours').innerText = String(Math.floor((diff / 3600000) % 24)).padStart(2, '0');
+    document.getElementById('mins').innerText = String(Math.floor((diff / 60000) % 60)).padStart(2, '0');
+    document.getElementById('secs').innerText = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+  }
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+
+  const wishes = [
+    "🎄 願這個冬天，所有的溫暖與好運都如期而至！",
+    "🎁 拆開每一份聖誕禮物，都是滿滿的心動與驚喜！",
+    "✨ 在銀白色的雪夜裡，願你每天都像布丁狗一樣開心！",
+    "🔔 叮叮噹！聖誕鈴聲為你送上整年的幸福與順利！"
+  ];
+  let wishIdx = 0;
+  function nextWish() {
+    wishIdx = (wishIdx + 1) % wishes.length;
+    document.getElementById('wishText').innerText = wishes[wishIdx];
+  }
+
+  function playChime() {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const notes = [659.25, 659.25, 659.25, 659.25, 659.25, 659.25, 659.25, 783.99, 523.25, 587.33, 659.25];
+    const times = [0, 0.22, 0.44, 0.85, 1.07, 1.29, 1.7, 1.92, 2.14, 2.36, 2.58];
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.25, ctx.currentTime + times[i]);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + times[i] + 0.35);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + times[i]);
+      osc.stop(ctx.currentTime + times[i] + 0.36);
+    });
+  }
+
+  const canvas = document.getElementById('snow');
+  const ctx = canvas.getContext('2d');
+  let w = canvas.width = window.innerWidth;
+  let h = canvas.height = window.innerHeight;
+  let snowing = true;
+  window.onresize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
+
+  const flakes = Array.from({ length: 85 }, () => ({
+    x: Math.random() * w, y: Math.random() * h,
+    r: Math.random() * 3.2 + 1.2, d: Math.random() * 1 + 0.4
+  }));
+
+  function drawSnow() {
+    ctx.clearRect(0, 0, w, h);
+    if (snowing) {
+      ctx.fillStyle = 'rgba(255, 241, 242, 0.85)';
+      ctx.beginPath();
+      for (let f of flakes) { ctx.moveTo(f.x, f.y); ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2); }
+      ctx.fill();
+      for (let f of flakes) {
+        f.y += f.d * 1.4;
+        f.x += Math.sin(f.y * 0.01) * 0.5;
+        if (f.y > h) { f.y = -5; f.x = Math.random() * w; }
+      }
+    }
+    requestAnimationFrame(drawSnow);
+  }
+  drawSnow();
+
+  function toggleSnow() {
+    snowing = !snowing;
+    document.getElementById('snowBtn').innerText = snowing ? '🌨️ 雪花：開' : '🌨️ 雪花：關';
+  }
+  function toggleFilter() {
+    document.getElementById('winterImg').classList.toggle('winter-filter');
+  }
+</script>
+</body>
+</html>
